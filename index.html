@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link href="androidstudio.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <pre id="sourceCode" style = "display: inline-block; margin: 0"><code style="display: block; font-size: 100px">use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader; // ライブラリ使用の宣言
+
+$reader = new XlsxReader();                             // XlsxReaderのインスタンスを生成する
+$book = $reader -> load($fileName);                     // ファイルを読み込む
+$sheetCount = $book -> getSheetCount();                 // シート数を取得する
+
+$data = [];                                             // データの保存先
+
+for ($i = 0; $i < $sheetCount; $i ++) {                 // シート数で繰り返す
+  $sheet = $book -> getSheet($i);                       // インデックスからシートを取得する
+  $range = $sheet -> calculateWorksheetDimension();     // シートの有効範囲を取得する
+  foreach ($sheet -> getRowIterator() as $row) {        // 全ての行に対して繰り返す
+    $iterator = $row -> getCellIterator();              // 列のイテレータを取得する
+    $iterator -> setIterateOnlyExistingCells(FALSE);    // 空白を読み込ませる
+    $current = [];                                      // 行ごとのデータの保存先
+    foreach ($iterator as $cell) {                      // 全てのセルに対して繰り返す
+      array_push($current, $cell -> getValue());        // セルの値を保存する
+    }
+    array_push($current, $i);                           // シート番号を保存する
+    array_push($data, $current);                        // 行ごとのデータを保存する
+  }
+}
+
+$filter = fn ($arr, $value) => {                        // パターンテスト用の関数
+  $value = mb_convert_kana($value, 'asK');              // 全角英数字を半角に、半角カナを全角に変換する
+  $pattern = '/^.*'.$value.'.*$/u';                     // 判定用のパターン
+  for ($i = 0; $i < count($arr) - 1; $i ++)             // 全ての要素で検索する
+    if (preg_match($pattern, $arr[$i])) return TRUE;    // パターンにマッチしたらtrueを返す
+  return FALSE;                                         // パターンにマッチしなかったらFALSEを返す
+};
+
+$keywords = '';                                         // キーワード
+$temp = [];                                             // 一時データの保存先
+
+foreach (explode(',', $keywords) as $keyword) {         // キーワードをカンマで区切り、全てのキーワードで繰り返す
+  $temp = array_filter($data, fn ($arr) =>              // キーワードに合致するデータのみを抽出する
+    fn ($keyword) => $filter($arr, $keyword));          // フィルタ関数の結果を返す
+  $temp = array_values($temp);                          // インデックスを振り直す
+  $data = $temp;                                        // データと一時データの入れ替える
+}</code></pre>
+    <script src="https://refrain-net.github.io/res/utils.js"></script>
+    <script src="highlight.min.js"></script>
+    <script src="php.min.js"></script>
+    <script>
+'use strict';
+
+hljs.highlightAll();
+
+setTimeout(async function () {
+  const pre = document.querySelector('#sourceCode');
+  const image = new Image();
+  image.src = await pre.toImage({
+    style: 'pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#a9b7c6;background:#282b2e}.hljs-bullet,.hljs-literal,.hljs-number,.hljs-symbol{color:#6897bb}.hljs-deletion,.hljs-keyword,.hljs-selector-tag{color:#cc7832}.hljs-link,.hljs-template-variable,.hljs-variable{color:#629755}.hljs-comment,.hljs-quote{color:grey}.hljs-meta{color:#bbb529}.hljs-addition,.hljs-attribute,.hljs-string{color:#6a8759}.hljs-section,.hljs-title,.hljs-type{color:#ffc66d}.hljs-name,.hljs-selector-class,.hljs-selector-id{color:#e8bf6a}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}'
+  });
+  document.body.appendChild(image);
+}, 0);
+    </script>
+  </body>
+</html>
