@@ -1,0 +1,58 @@
+<div class="css-cube">
+<div class="css-face css-forward">1</div>
+<div class="css-face css-reverse">2</div>
+<div class="css-face css-right">3</div>
+<div class="css-face css-left">4</div>
+</div>
+<style>
+.css-cube {                                      /* 立体の大きさ傾きの指定 */
+  width: 75px;
+  height: 100px;
+  margin: 5%;
+  border: none;
+  transform-style: preserve-3d;                  /* ３Ｄで表示 */
+  transform:rotateY(0deg) rotateX(-30deg) rotateZ(0deg); /* 立体の傾き */
+  display : inline-block;
+  animation: cubeAnime 4s linear infinite;       /* 動きの指定 */
+}
+@keyframes cubeAnime{                            /* 回転方向の指定 */
+   0% { transform: rotateY(0deg) rotateX(-30deg) rotateZ(-30deg);}
+  100% { transform: rotateY(360deg) rotateX(-30deg) rotateZ(-30deg);}
+}
+.css-face {                                      /* 各面の指定 */
+  position: absolute;
+  width: 75px;
+  height: 100px;
+  border: 1px solid black;
+  line-height: 100px;
+  font-size: 50px;
+  color: black;
+  text-align: center;
+  opacity: 0.5;                                  /* 透明度を指定 */
+  backface-visibility : visible;                 /* 裏面を表示 */
+}
+.css-forward {                                   /* 前面の指定 */
+  background: silver;
+  transform: translateZ(37.5px);
+}
+.css-reverse {                                   /* 後面の指定 */
+  background: lime;
+  transform: rotateY(180deg) translateZ(37.5px);
+}
+.css-right {                                     /* 右面の指定 */
+  background: red;
+  transform: rotateY(90deg) translateZ(37.5px);
+}
+.css-left {                                      /* 左面の指定 */
+  background: aqua;
+  transform: rotateY(-90deg) translateZ(37.5px);
+}
+.css-top {                                       /* 上面の指定 */
+  background: yellow;
+  transform: rotateX(90deg) translateZ(37.5px);
+}
+.css-bottom {                                    /* 下面の指定 */
+  background: fuchsia;
+  transform: rotateX(-90deg) translateZ(37.5px);
+}
+</style>
